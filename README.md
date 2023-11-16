@@ -1,5 +1,5 @@
 
-<h1>
+<h1 align="center">
   <br>
   <img src="https://cdn.discordapp.com/attachments/1159020295143821312/1174667411035783198/logo_1.png?ex=65686d47&is=6555f847&hm=2f5f4c435ea8456ef3ce7b8fd8d7130ce8ed9dd8a4047a41ee436e018bb5ec11&" alt="Rhyme" width="200">
   <br>
