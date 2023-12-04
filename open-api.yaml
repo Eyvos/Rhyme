@@ -394,7 +394,8 @@ components:
           format: int64
           example: 1
         parentId:
-          type: integer
+          type: integer 
+          nullable: true
           format: int64
           example: 1
           nullable: true
