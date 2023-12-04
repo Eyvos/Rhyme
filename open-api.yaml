@@ -398,8 +398,6 @@ components:
           nullable: true
           format: int64
           example: 1
-          nullable: true
-
     RhymeWithId:
       oneOf:
         - $ref: "#/components/schemas/Rhyme"
