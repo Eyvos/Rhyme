@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
     "nodemon": "^3.0.2",
+    "openai": "^4.20.1",
     "sequelize": "^6.35.1",
     "sqlite3": "^5.1.6"
   }
