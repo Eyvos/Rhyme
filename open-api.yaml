@@ -36,8 +36,12 @@ paths:
         required: true
       responses:
         "200":
-          description: "successful operation"
-        "400":
+          description: "Login successful"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/json_web_token"
+        "401":
           description: "Invalid username/password supplied"
   /auth/register:
     post:
@@ -57,20 +61,6 @@ paths:
           description: "successful operation"
         "400":
           description: "Invalid username/password supplied"
-  /auth/logout:
-    get:
-      tags:
-        - "Auth"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logout"
-      responses:
-        "200":
-          description: "successful operation"
-        "400":
-          description: "Invalid username/password supplied"
-        "401":
-          description: "Unauthorized"
   /users:
     get:
       tags:
@@ -341,8 +331,13 @@ components:
         format: int64
         example: 1
   schemas:
+    json_web_token:
+      type: string
+      pattern: ^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]+)$
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
     EmailPassword:
       type: object
+      required: [email, password]
       properties:
         email:
           type: string
@@ -352,6 +347,7 @@ components:
           example: "password123"
     EmailUsername:
       type: object
+      required: [email, username]
       properties:
         email:
           type: string
@@ -363,10 +359,11 @@ components:
       oneOf:
         - $ref: "#/components/schemas/EmailUsername"
       type: object
+      required: [password]
       properties:
         password:
           type: string
-          example: "password123"    
+          example: "password123"
     User:
       oneOf:
         - $ref: "#/components/schemas/EmailUsername"
@@ -394,7 +391,7 @@ components:
           format: int64
           example: 1
         parentId:
-          type: integer 
+          type: integer
           nullable: true
           format: int64
           example: 1

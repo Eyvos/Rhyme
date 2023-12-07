@@ -1,8 +1,7 @@
 const router = require('express').Router();
-const authController = require('../controllers/authController');
-
-router.get('/login', authController.login);
-// router.get('/:id', bookController.getBookById);
+const authController = require('../controllers/authController');;
+router.post('/login', authController.login);
+router.post('/register', authController.register);
 // router.post('/', bookController.addBook);
 // router.delete('/:id', bookController.deleteBookById);
 
