@@ -288,6 +288,27 @@ paths:
           description: "Invalid username/password supplied"
         "401":
           description: "Unauthorized"
+
+  /rhymes/user/{userId}:
+    get:
+      tags:
+        - "Rhymes"
+      summary: "Get rhymes by user id"
+      description: ""
+      operationId: "getRhymesByUserId"
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RhymeWithId"
+        "400":
+          description: "Invalid username/password supplied"
   /rhymes/parent/{parentId}:
     get:
       tags:

@@ -1,7 +1,7 @@
 let jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
-const authService = require('../services/authService');
+const authService = require('../services/auth');
 
 
 exports.login = async (req, res) => {
