@@ -27,7 +27,7 @@ app.use((err, req, res, next) => {
 });
 
 //Importing the routers
-const authRouter = require('./routes/authRouter');
+const authRouter = require('./routes/auth');
 
 //Redirecting the routes to the routers
 app.use('/auth', authRouter);
