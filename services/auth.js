@@ -1,4 +1,5 @@
 const db = require('../DB/DataAccess');
+const Op = require('sequelize').Op;
 
 exports.login = (email, password) => {
     return new Promise((resolve, reject) => {
@@ -22,10 +23,27 @@ exports.login = (email, password) => {
 exports.register = (username, email, password) => {
     return new Promise((resolve, reject) => {
         db.User.findAll(
-            { where: { email: email } }
+            { where: {
+                [Op.or]: [
+                    { username: username },
+                    { email: email }
+                ]
+            } }
         ).then(users => {
             if (users.length > 0) {
-                reject('Email already exists');
+                let error = '';
+                if(users.find( user => user.username === username))
+                    error += 'Username';
+
+                if(users.find( user => user.email === email))
+                {
+                    if(error.length > 0)
+                        error += ' and email';
+                    else
+                        error += 'Email';
+                }
+
+                reject(error + ' already used');
             } else {
                 db.User.create({ username: username, email: email, password: password }).then(user => {
                     resolve(user);
