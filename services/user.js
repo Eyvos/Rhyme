@@ -1,5 +1,6 @@
 const db = require('../DB/DataAccess');
 const Op = require('sequelize').Op;
+
 // retrieve all users which match the given username
 // for a limited number of documents
 exports.findAll = async (username = '', page = 1, limit = 20) => {
@@ -28,6 +29,33 @@ exports.findOne = async (id) => {
         db.User.findByPk(id).then(user => {
             delete user.dataValues.password;
             resolve(user);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+exports.changeUsername = async (username, email, password) => {
+    return new Promise((resolve, reject) => {
+        db.User.findOne({
+            where: {
+                username: username
+            }
+        }).then(users => {
+            if (users) {
+                reject('Username already used');
+            } else {
+                db.User.update({username: username}, {
+                    where: {
+                        email: email,
+                        token: password
+                    }
+                }).then(() => {
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            }
         }).catch(err => {
             reject(err);
         });

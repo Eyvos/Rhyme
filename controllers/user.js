@@ -23,3 +23,12 @@ exports.getOne = async (req, res) => {
         res.status(401).json({ message: "Invalid email / password supplied" });
     });
 }
+
+exports.changeUsername = async (req, res) => {
+    const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
+    await userService.changeUsername(req.body.username, req.body.email, hash).then(() => {
+        res.status(200).send('Username changed successfully');
+    }).catch(err => {
+        res.status(401).send(err);
+    });
+}

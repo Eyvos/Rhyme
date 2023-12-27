@@ -4,5 +4,6 @@ const auth = require('../middlewares/authMiddleware');
 
 router.get('/', auth, userController.getAll);
 router.get('/:id', auth, userController.getOne);
+router.put('/', auth, userController.changeUsername);
 
 module.exports = router;

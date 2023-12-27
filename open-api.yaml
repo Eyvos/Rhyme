@@ -102,6 +102,28 @@ paths:
                   $ref: "#/components/schemas/User"
         "400":
           description: "Invalid username/password supplied"
+    put:
+      tags:
+        - "Users"
+      summary: "Update user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailUsernamePassword"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          $ref: "#/components/schemas/User"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: "Unauthorized"
   /users/{userId}:
     get:
       tags:
@@ -120,30 +142,7 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: "Invalid username/password supplied"
-    put:
-      tags:
-        - "Users"
-      summary: "Update user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
-      parameters:
-        - $ref: "#/components/parameters/userId"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/EmailUsername"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          $ref: "#/components/schemas/User"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "401":
-          description: "Unauthorized"
+
     delete:
       tags:
         - "Users"
