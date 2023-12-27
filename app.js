@@ -30,6 +30,7 @@ app.use((err, req, res, next) => {
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 
+
 //Redirecting the routes to the routers
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
