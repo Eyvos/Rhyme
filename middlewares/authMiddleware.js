@@ -7,6 +7,6 @@ module.exports = (req, res, next) => {
         jwt.verify(token, process.env.TOKEN_KEY);
         next();
     } catch (error) {
-        res.status(401).json({ message: "Auth failed, invalid token" });
+        res.status(401).json({ message: "Authenticated route, identify yourself with a valid JWT." });
     }
 }
