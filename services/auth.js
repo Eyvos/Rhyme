@@ -21,11 +21,16 @@ exports.login = (email, password) => {
 
 exports.register = (username, email, password) => {
     return new Promise((resolve, reject) => {
-        db.User.findAll(
-            { where: { email: email } }
-        ).then(users => {
+        db.User.findAll({
+            where: {
+                email: email,
+                username: username
+            }
+        }).then(users => {
             if (users.length > 0) {
-                reject('Email already exists');
+                let err = new Error('Email or username already exists');
+                err.statusCode = 400;
+                reject(err);
             } else {
                 db.User.create({ username: username, email: email, password: password }).then(user => {
                     resolve(user);

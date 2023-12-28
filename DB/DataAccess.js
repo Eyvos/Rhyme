@@ -29,7 +29,7 @@ const Rhyme = sequelize.define('rhyme', {
         allowNull: true
     }
 });
-Rhyme.hasMany(Rhyme, {foreignKey: 'parentId', sourceKey: 'id'});
+Rhyme.hasMany(Rhyme, { foreignKey: 'parentId', sourceKey: 'id' });
 //#endregion
 //#region define user table
 const User = sequelize.define('user', {
@@ -46,12 +46,12 @@ const User = sequelize.define('user', {
         allowNull: false
     }
 });
-User.hasMany(Rhyme, {foreignKey: 'userId', sourceKey: 'id'});
+User.hasMany(Rhyme, { foreignKey: 'userId', sourceKey: 'id' });
 //#endregion
 //#region sync table with database
 User.sync();
 Rhyme.sync();
 //#endregion
 exports.User = User;
-exports.Post = Rhyme;
+exports.Rhyme = Rhyme;
 exports.DB = sequelize;
