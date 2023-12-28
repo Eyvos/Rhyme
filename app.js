@@ -27,11 +27,12 @@ app.use((err, req, res, next) => {
 });
 
 //Importing the routers
-const authRouter = require('./routes/authRouter');
-const rhymeRouter = require('./routes/rhyme');
+const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
+
 
 //Redirecting the routes to the routers
 app.use('/auth', authRouter);
-app.use('/rhymes', rhymeRouter);
+app.use('/users', userRouter);
 
 module.exports = app;
