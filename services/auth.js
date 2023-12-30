@@ -1,5 +1,5 @@
 const db = require('../DB/DataAccess');
-const Op = require('sequelize').Op;
+const bcrypt = require('bcrypt');
 
 exports.login = (email, hash) => {
     try {
@@ -20,40 +20,22 @@ exports.login = (email, hash) => {
     }
 };
 
-exports.register = (username, email, password) => {
-    return new Promise((resolve, reject) => {
-      try
-      {
-        db.User.findAll(
-            { where: {
-                [Op.or]: [
-                    { username: username },
-                    { email: email }
-                ]
-            } }
-        ).then(users => {
-            if (users.length > 0) {
-                let error = '';
-                if(users.find( user => user.username === username))
-                    error += 'Username';
-
-                if(users.find( user => user.email === email))
-                {
-                    if(error.length > 0)
-                        error += ' and email';
-                    else
-                        error += 'Email';
-                }
-
-                throw new Error(error + ' already used');
-            } else {
-                db.User.create({ username: username, email: email, password: password }).then(user => {
-                    resolve(user);
-                }).catch(err => {
-                    throw err;
-                });
+exports.register = async (username, email, password) => {
+    try {
+        const existingUser = await db.User.findOne({
+            where: {
+                email: email
             }
         });
+
+        if (existingUser) {
+            let err = new Error('Email or username already exists');
+            err.statusCode = 400;
+            throw err;
+        }
+
+        const user = await db.User.create({ username: username, email: email, password: password });
+        return user;
     } catch (err) {
         throw err; // Propage l'erreur pour être capturée dans le contrôleur
     }
