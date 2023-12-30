@@ -35,7 +35,7 @@ exports.findOne = async (id) => {
     });
 }
 
-exports.changeUsername = async (username, email, password) => {
+exports.changeUsername = async (id, email, username) => {
     return new Promise((resolve, reject) => {
         db.User.findOne({
             where: {
@@ -48,10 +48,13 @@ exports.changeUsername = async (username, email, password) => {
                 db.User.update({username: username}, {
                     where: {
                         email: email,
-                        password: password
+                        id: id
                     }
-                }).then(() => {
-                    resolve();
+                }).then(columnsAffected => {
+                    if(columnsAffected[0] == 0)
+                        reject('Id ' + id + ' doesn\'t exist in database');
+                    else
+                        resolve();
                 }).catch(err => {
                     reject(err);
                 });
@@ -63,7 +66,7 @@ exports.changeUsername = async (username, email, password) => {
 }
 
 
-exports.changePassword = async (email, oldPassword, newPassword) => {
+exports.changePassword = async (id, email, newPassword) => {
     return new Promise((resolve, reject) => {
         db.User.findOne({
             where: {
@@ -76,10 +79,13 @@ exports.changePassword = async (email, oldPassword, newPassword) => {
                 db.User.update({password: newPassword}, {
                     where: {
                         email: email,
-                        password: oldPassword
+                        id: id
                     }
-                }).then(() => {
-                    resolve();
+                }).then(columnsAffected => {
+                    if (columnsAffected[0] == 0)
+                        reject('Id ' + id + ' doesn\'t exist in database');
+                    else
+                        resolve();
                 }).catch(err => {
                     reject(err);
                 });
