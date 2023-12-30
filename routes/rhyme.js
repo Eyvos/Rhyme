@@ -9,6 +9,7 @@ router.get('/', auth, rhymeController.getAll);
 router.get('/parent/:id', auth, rhymeController.getByParentId);
 router.get('/:id', rhymeController.getById);
 router.post('/', auth, rhymeController.create);
+router.post('/generated', auth, rhymeController.generate);
 router.delete('/:id', auth, rhymeController.delete);
 
 module.exports = router;
