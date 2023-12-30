@@ -102,6 +102,43 @@ paths:
                   $ref: "#/components/schemas/User"
         "400":
           description: "Invalid username/password supplied"
+    put:
+      tags:
+        - "Users"
+      summary: "Update user's username"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/newUsername"
+        required: true
+      responses:
+        "200":
+          description: "successful operation"
+          $ref: "#/components/schemas/User"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: "Unauthorized"
+    delete:
+      tags:
+        - "Users"
+      summary: "Delete your user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: "Unauthorized"
   /users/{userId}:
     get:
       tags:
@@ -120,35 +157,12 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: "Invalid username/password supplied"
-    put:
-      tags:
-        - "Users"
-      summary: "Update user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
-      parameters:
-        - $ref: "#/components/parameters/userId"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/EmailUsername"
-        required: true
-      responses:
-        "200":
-          description: "successful operation"
-          $ref: "#/components/schemas/User"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "401":
-          description: "Unauthorized"
+
     delete:
       tags:
         - "Users"
       summary: "Delete user"
-      description: "This can only be done by the logged in user."
+      description: "This can only be done by an administrator."
       operationId: "deleteUser"
       parameters:
         - $ref: "#/components/parameters/userId"
@@ -160,23 +174,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "400":
-          description: "Invalid username/password supplied"
+          description: "Invalid Id supplied"
         "401":
           description: "Unauthorized"
-  /users/password/{userId}:
+  /users/password:
     put:
       tags:
         - "Users"
       summary: "Update user password"
       description: "This can only be done by the logged in user."
       operationId: "updateUserPassword"
-      parameters:
-        - $ref: "#/components/parameters/userId"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EmailPassword"
+              $ref: "#/components/schemas/newPassword"
         required: true
       responses:
         "200":
@@ -478,6 +490,13 @@ components:
       type: string
       pattern: ^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]+)$
       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    newPassword:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+          example: "password123"
     successMessage:
       type: string
       description: "A message indicating the success of the operation."
@@ -539,6 +558,13 @@ components:
         password:
           type: string
           example: "password123"
+    newUsername:
+      type: object
+      required: [username]
+      properties:
+        username:
+          type: string
+          example: "JohnDoe"
     User:
       oneOf:
         - $ref: "#/components/schemas/EmailUsername"
