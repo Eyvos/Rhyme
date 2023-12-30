@@ -3,11 +3,13 @@ let jwt = require('jsonwebtoken');
 require('dotenv').config();
 const rhymeService = require('../services/rhyme');
 
-exports.getAll = async (req, res) => {
+exports.getAll = async (req, res, next) => {
     try {
         let rhymes = await rhymeService.findAll(req.query.page, req.query.limit, req.query.title)
         if (!rhymes.length) {
-            throw new Error('No rhyme found')
+            const err = new Error('No rhyme found')
+            err.status = 404
+            throw err
         }
         res.status(200).json({
             message: 'Rhymes found',
@@ -16,19 +18,17 @@ exports.getAll = async (req, res) => {
             rhymes: rhymes
         });
     } catch (err) {
-        res.status(404).json({
-            message: err.message,
-            page: req.query.page,
-            limit: req.query.limit,
-        });
+        next(err)
     }
 }
 
-exports.getByParentId = async (req, res) => {
+exports.getByParentId = async (req, res, next) => {
     try {
         let rhymes = await rhymeService.findByParentId(req.params.id, req.query.page, req.query.limit)
         if (!rhymes.length) {
-            throw new Error('No rhyme found')
+            const err = new Error('No rhyme found')
+            err.status = 404
+            throw err
         }
         res.status(200).json({
             message: 'Rhymes found',
@@ -37,39 +37,35 @@ exports.getByParentId = async (req, res) => {
             rhymes: rhymes
         });
     } catch (err) {
-        res.status(404).json({
-            message: err.message
-        });
+        next(err)
     }
 }
 
-exports.getById = async (req, res) => {
+exports.getById = async (req, res, next) => {
     try {
         let rhyme = await rhymeService.findById(req.params.id);
         if (!rhyme) {
-            res.status(404).json({
-                message: 'Rhyme not found'
-            });
+            const err = new Error('No rhyme found')
+            err.status = 404
+            throw err
         }
         res.status(200).json({
             message: 'Rhyme found',
             rhyme: rhyme
         });
     } catch (err) {
-        res.status(404).json({
-            message: "Rhyme not found"
-        });
+        next(err)
     }
 }
 
-exports.create = async (req, res) => {
-    const userId = jwt.decode(req.headers.authorization.split(' ')[1], process.env.TOKEN_KEY).id
-    if (req.body.userId != userId) {
-        res.status(401).json({
-            message: 'Unauthorized'
-        });
-    } else {
-        try {
+exports.create = async (req, res, next) => {
+    try {
+        const userId = jwt.decode(req.headers.authorization.split(' ')[1], process.env.TOKEN_KEY).id
+        if (req.body.userId != userId) {
+            const err = new Error('Unauthorized')
+            err.status = 401
+            throw err
+        } else {
             let rhyme = await rhymeService.create(
                 req.body.title,
                 req.body.content,
@@ -80,33 +76,20 @@ exports.create = async (req, res) => {
                 message: 'Rhyme created successfully',
                 rhyme: rhyme
             });
-        } catch (err) {
-            if (err.message === "Parent rhyme not found") {
-                res.status(404).json({ message: err.message });
-            }
-            else {
-                if (err.message === "User not found") {
-                    res.status(404).json({ message: err.message });
-                } else {
-                    if (err.message === "Invalid Rhyme: Content does not match title") {
-                        res.status(400).json({ message: err.message });
-                    } else {
-                        res.status(500).send("Internal server error");
-                    }
-                }
-            }
         }
+    } catch (err) {
+        next(err)
     }
 }
 
-exports.generate = async (req, res) => {
-    const userId = jwt.decode(req.headers.authorization.split(' ')[1], process.env.TOKEN_KEY).id
-    if (req.body.userId != userId) {
-        res.status(401).json({
-            message: 'Unauthorized'
-        });
-    } else {
-        try {
+exports.generate = async (req, res, next) => {
+    try {
+        const userId = jwt.decode(req.headers.authorization.split(' ')[1], process.env.TOKEN_KEY).id
+        if (req.body.userId != userId) {
+            const err = new Error('Unauthorized')
+            err.status = 401
+            throw err
+        } else {
             let rhyme = await rhymeService.generate(
                 req.body.title,
                 req.body.userId,
@@ -115,46 +98,21 @@ exports.generate = async (req, res) => {
                 message: 'Rhyme generated successfully',
                 rhyme: rhyme
             });
-        } catch (err) {
-            if (err.message === "Parent rhyme not found") {
-                res.status(404).json({ message: err.message });
-            }
-            else {
-                if (err.message === "User not found") {
-                    res.status(404).json({ message: err.message });
-                } else {
-                    if (err.message === "Invalid Rhyme: Content does not match title") {
-                        res.status(400).json({ message: err.message });
-                    } else {
-                        res.status(500).send("Internal server error");
-                    }
-                }
-            }
         }
+    } catch (err) {
+        next(err)
     }
 }
 
-exports.delete = async (req, res) => {
-    const userId = jwt.decode(req.headers.authorization.split(' ')[1], process.env.TOKEN_KEY).id
+exports.delete = async (req, res, next) => {
     try {
+        const userId = jwt.decode(req.headers.authorization.split(' ')[1], process.env.TOKEN_KEY).id
         let rhyme = await rhymeService.delete(req.params.id, userId);
         res.status(200).json({
             message: 'Rhyme deleted successfully',
             rhyme: rhyme
         });
     } catch (err) {
-        if (err.message === "Unauthorized") {
-            res.status(401).json({
-                message: err.message
-            });
-        } else {
-            if (err === "Rhyme not found") {
-                res.status(404).send({ message: err });
-            } else {
-                res.json({
-                    message: err.message
-                })
-            }
-        }
+        next(err)
     }
 }
