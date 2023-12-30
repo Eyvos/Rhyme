@@ -105,7 +105,7 @@ paths:
     put:
       tags:
         - "Users"
-      summary: "Update user"
+      summary: "Update user's username"
       description: "This can only be done by the logged in user."
       operationId: "updateUser"
       requestBody:
@@ -158,24 +158,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-        "400":
-          description: "Invalid username/password supplied"
         "401":
           description: "Unauthorized"
-  /users/password/{userId}:
+  /users/password:
     put:
       tags:
         - "Users"
       summary: "Update user password"
       description: "This can only be done by the logged in user."
       operationId: "updateUserPassword"
-      parameters:
-        - $ref: "#/components/parameters/userId"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EmailPassword"
+              $ref: "#/components/schemas/EmailOldPasswordNewPassword"
         required: true
       responses:
         "200":
@@ -355,6 +351,19 @@ components:
       type: string
       pattern: ^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-\+\/=]+)$
       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    EmailOldPasswordNewPassword:
+      type: object
+      required: [email, oldPassword, newPassword]
+      properties:
+        email:
+          type: string
+          example: "john.doe@test.com"
+        oldPassword:
+          type: string
+          example: "password123"
+        newPassword:
+          type: string
+          example: "newPassword123"
     EmailPassword:
       type: object
       required: [email, password]

@@ -41,14 +41,14 @@ exports.changeUsername = async (username, email, password) => {
             where: {
                 username: username
             }
-        }).then(users => {
-            if (users) {
+        }).then(user => {
+            if (user) {
                 reject('Username already used');
             } else {
                 db.User.update({username: username}, {
                     where: {
                         email: email,
-                        token: password
+                        password: password
                     }
                 }).then(() => {
                     resolve();
@@ -56,6 +56,51 @@ exports.changeUsername = async (username, email, password) => {
                     reject(err);
                 });
             }
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+
+exports.changePassword = async (email, oldPassword, newPassword) => {
+    return new Promise((resolve, reject) => {
+        db.User.findOne({
+            where: {
+                email: email
+            }
+        }).then(user => {
+            if (user) {
+                reject('Username already used');
+            } else {
+                db.User.update({password: newPassword}, {
+                    where: {
+                        email: email,
+                        password: oldPassword
+                    }
+                }).then(() => {
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            }
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+exports.deleteUserFromDb = async (userId) => {
+    return new Promise((resolve, reject) => {
+        db.User.destroy({
+            where: {
+                id: userId
+            }
+        }).then(columnsAffected => {
+            if (columnsAffected == 0)
+                reject('Id ' + userId + ' doesn\'t exist in database');
+            else
+                resolve();
         }).catch(err => {
             reject(err);
         });

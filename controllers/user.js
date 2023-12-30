@@ -32,3 +32,22 @@ exports.changeUsername = async (req, res) => {
         res.status(401).send(err);
     });
 }
+
+exports.changePassword = async (req, res) => {
+    const oldHash = bcrypt.hashSync(req.body.oldPassword, process.env.SALT);
+    const newHash = bcrypt.hashSync(req.body.newPassword, process.env.SALT);
+    await userService.changePassword(req.body.email, oldHash, newHash).then(() => {
+        res.status(200).send('Password changed successfully');
+    }).catch(err => {
+        res.status(401).send(err);
+    });
+}
+
+exports.deleteUser = async (req, res) => {
+    const id = req.params.id;
+    await userService.deleteUserFromDb(id).then(() => {
+        res.status(200).send('User deleted successfully')
+    }).catch(err => {
+        res.status(401).send(err);
+    });
+}
