@@ -24,7 +24,13 @@ exports.register = async (req, res) => {
     authService.register(req.body.username, req.body.email, hash).then(user => {
         res.status(200).json({
             message: 'User created successfully',
-            user: user
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                updatedAt: user.updatedAt,
+                createdAt: user.createdAt
+            }
         });
     }).catch(err => {
         if (err.statusCode === 400) {
