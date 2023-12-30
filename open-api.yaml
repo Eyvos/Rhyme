@@ -60,7 +60,7 @@ paths:
         "200":
           description: "successful operation"
         "400":
-          description: "Invalid username/password supplied"
+          description: "Invalid email / password supplied"
   /users:
     get:
       tags:
@@ -202,50 +202,57 @@ paths:
           description: "Unauthorized"
   /rhymes:
     get:
-      tags:
-        - "Rhymes"
-      summary: "Get all rhymes"
-      description: ""
-      operationId: "getRhymes"
-      parameters:
-        - name: "limit"
-          in: "query"
-          description: "How many items to return at one time (max 100)"
-          required: false
-          schema:
-            type: "integer"
-            format: "int32"
-            default: 20
-        - name: "page"
-          in: query
-          description: "Which page to return"
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 1
-        - name: "title"
-          in: query
-          description: "Filter by title"
-          required: false
-          schema:
-            type: string
-      responses:
-        "200":
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/RhymeWithId"
-        "400":
-          description: "Invalid username/password supplied"
+        tags:
+          - "Rhymes"
+        summary: "Get all rhymes"
+        description: "Returns a list of rhymes with optional pagination and filtering by title."
+        operationId: "getRhymes"
+        parameters:
+          - $ref: "#/components/parameters/limit"
+          - $ref: "#/components/parameters/page"
+          - $ref: "#/components/parameters/title"
+        responses:
+          "200":
+            description: "Successful operation. Returns a list of rhymes."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/successMessage"
+                    page:
+                      $ref: "#/components/schemas/page"
+                    limit:
+                      $ref: "#/components/schemas/page"
+                    rhymes:
+                      type: array
+                      description: "An array containing rhyme objects."
+                      items:
+                        $ref: "#/components/schemas/RhymeWithId"
+          "404":
+            description: "No rhyme found."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/404Message"
+          "401":
+            description: "Unauthorized. Authentication required."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/401Message"
     post:
       tags:
         - "Rhymes"
       summary: "Create rhyme"
-      description: "This can only be done by the logged in user."
+      description: "Create a rhyme"
       operationId: "createRhyme"
       requestBody:
         content:
@@ -255,96 +262,211 @@ paths:
         required: true
       responses:
         "200":
-          description: "successful operation"
-          $ref: "#/components/schemas/Rhyme"
+          description: "Successful operation. Returns a rhyme object."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Rhyme"
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/successCreationMessage"
+                  rhyme:
+                    $ref: "#/components/schemas/RhymeWithId"
+        "404":
+            description: "No parent rhyme found."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/404ParentMessage"
         "401":
-          description: "Unauthorized"
+            description: "Unauthorized. Authentication required."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/401Message"
   /rhymes/{rhymeId}:
     get:
       tags:
         - "Rhymes"
       summary: "Get rhyme by id"
-      description: ""
+      description: "Returns a specific rhyme identified by its ID."
       operationId: "getRhymeById"
       parameters:
         - $ref: "#/components/parameters/rhymeId"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful operation. Returns a rhyme object."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RhymeWithId"
-        "400":
-          description: "Invalid username/password supplied"
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/successMessage"
+                  rhyme:
+                    $ref: "#/components/schemas/RhymeWithId"
+        "404":
+            description: "No rhyme found."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/404Message"
     delete:
       tags:
         - "Rhymes"
       summary: "Delete rhyme"
-      description: "This can only be done by the logged in user."
+      description: "Delete rhyme by id"
       operationId: "deleteRhyme"
       parameters:
         - $ref: "#/components/parameters/rhymeId"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful operation. Returns a rhyme object."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RhymeWithId"
-        "400":
-          description: "Invalid username/password supplied"
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/successMessage"
+                  rhyme:
+                    $ref: "#/components/schemas/RhymeWithId"
+        "404":
+            description: "Rhyme not found"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/404Message"
         "401":
-          description: "Unauthorized"
-
-  /rhymes/user/{userId}:
-    get:
-      tags:
-        - "Rhymes"
-      summary: "Get rhymes by user id"
-      description: ""
-      operationId: "getRhymesByUserId"
-      parameters:
-        - $ref: "#/components/parameters/userId"
-      responses:
-        "200":
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/RhymeWithId"
-        "400":
-          description: "Invalid username/password supplied"
-  /rhymes/parent/{parentId}:
+            description: "Unauthorized. Authentication required."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/401Message"
+  /rhymes/parent/{rhymeId}:
     get:
       tags:
         - "Rhymes"
       summary: "Get rhymes by parent id"
-      description: ""
-      operationId: "getRhymesByParentId"
+      description: "Returns a list of rhymes that match with the given parentId with optional pagination and filtering by title."
+      operationId: "getRhymeById"
       parameters:
         - $ref: "#/components/parameters/rhymeId"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful operation. Returns a rhyme object."
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/RhymeWithId"
-        "400":
-          description: "Invalid username/password supplied"
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/successMessage"
+                  rhyme:
+                    $ref: "#/components/schemas/RhymeWithId"
+        "404":
+            description: "No rhyme found."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/404Message"
         "401":
-          description: "Unauthorized"
+              description: "Unauthorized. Authentication required."
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        $ref: "#/components/schemas/401Message"
+  /rhymes/generated:
+    post:
+      tags:
+        - "Rhymes"
+      summary: "Create rhyme with Chat GPT"
+      description: "Returns a rhyme generated by the Chat GPT model and correspondoing to the given title."
+      operationId: "createGeneratedRhyme"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RhymeWithoutContent"
+        required: true
+      responses:
+        "200":
+          description: "Successful operation. Returns a rhyme object."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    $ref: "#/components/schemas/successMessage"
+                  rhyme:
+                    $ref: "#/components/schemas/RhymeWithId"
+        "404":
+            description: "No rhyme found."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      $ref: "#/components/schemas/404Message"
+        "401":
+              description: "Unauthorized. Authentication required."
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        $ref: "#/components/schemas/401Message"
 components:
   parameters:
+    page:
+      name: "page"
+      in: query
+      description: "Which page to return"
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    limit:
+      name: "limit"
+      in: "query"
+      description: "How many items to return at one time (max 100)"
+      required: false
+      schema:
+        type: "integer"
+        format: "int32"
+        default: 20
+    title:
+      name: "title"
+      in: query
+      description: "Filter by title"
+      required: false
+      schema:
+        type: string
     userId:
       name: userId
       in: path
@@ -375,6 +497,38 @@ components:
         password:
           type: string
           example: "password123"
+    successMessage:
+      type: string
+      description: "A message indicating the success of the operation."
+      example: "Resource found"
+    successDeletionMessage:
+      type: string
+      description: "A message indicating the success of the deletion."
+      example: "Resource deleted successfully"    
+    successCreationMessage:
+      type: string
+      description: "A message indicating the success of the creation."
+      example: "Resource created successfully"
+    404Message:
+      type: string
+      description: "A message indicating that no resource has been found."
+      example: "No resource found"
+    404ParentMessage:
+      type: string
+      description: "A message indicating that parent resource hasn't been found."
+      example: "Parent resource notfound"
+    401Message:
+      type: string
+      description: "A message indicating that authentication is required."
+      example: "Authenticated route, identify yourself with a valid JWT."
+    page:
+      type: integer
+      description: "The page number of the returned items."
+      example: 1
+    limit:
+      type: integer
+      description: "The limit of items per page."
+      example: 20
     EmailPassword:
       type: object
       required: [email, password]
@@ -420,12 +574,21 @@ components:
           format: int64
           example: 1
           nullable: true
-    Rhyme:
+    RhymeWithoutContent:
       type: object
       properties:
         title:
           type: string
           example: "Rhyme"
+        userId:
+          type: integer
+          format: int64
+          example: 1
+    Rhyme:
+      allOf:
+        - $ref: "#/components/schemas/RhymeWithoutContent"
+      type: object
+      properties:
         content:
           type: string
           example: "Rivers of words flowing, weaving tales,
@@ -433,17 +596,13 @@ components:
             Yearning for beauty in each line's rhyme,
             Molding emotions, frozen in time.
             Expressive language, a poet's chime."
-        userId:
-          type: integer
-          format: int64
-          example: 1
         parentId:
           type: integer
           nullable: true
           format: int64
           example: 1
     RhymeWithId:
-      oneOf:
+      allOf:
         - $ref: "#/components/schemas/Rhyme"
       type: object
       properties:

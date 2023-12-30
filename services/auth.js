@@ -1,27 +1,29 @@
 const db = require('../DB/DataAccess');
 const Op = require('sequelize').Op;
 
-exports.login = (email, password) => {
-    return new Promise((resolve, reject) => {
-        db.User.findAll({
-            where: {
-                email: email,
-                password: password
-            }
-        }).then(users => {
-            if (users.length > 0) {
-                resolve(users[0].dataValues);
-            } else {
-                reject('Invalid email or password');
-            }
-        }).catch(err => {
-            reject(err);
-        });
-    });
+exports.login = (email, hash) => {
+    try {
+        const rhyme = db.User.findOne({ where: { email: email } });
+        if (!user) {
+            const err = new Error('Invalid email or password');
+            err.status = 400;
+            throw err
+        }
+        const isValidPassword = hash == user.password;
+        if (!isValidPassword) {
+            const err = new Error('Invalid email or password');
+            err.status = 400;
+            throw err
+        }
+    } catch (err) {
+        throw err
+    }
 };
 
 exports.register = (username, email, password) => {
     return new Promise((resolve, reject) => {
+      try
+      {
         db.User.findAll(
             { where: {
                 [Op.or]: [
@@ -43,16 +45,16 @@ exports.register = (username, email, password) => {
                         error += 'Email';
                 }
 
-                reject(error + ' already used');
+                throw new Error(error + ' already used');
             } else {
                 db.User.create({ username: username, email: email, password: password }).then(user => {
                     resolve(user);
                 }).catch(err => {
-                    reject(err);
+                    throw err;
                 });
             }
-        }).catch(err => {
-            reject(err);
         });
-    });
-}
+    } catch (err) {
+        throw err; // Propage l'erreur pour être capturée dans le contrôleur
+    }
+};
