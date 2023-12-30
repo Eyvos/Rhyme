@@ -4,24 +4,26 @@ require('dotenv').config();
 const authService = require('../services/auth');
 
 
-exports.login = async (req, res) => {
-    const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
-    await authService.login(req.body.email, hash).then(user => {
+exports.login = async (req, res, next) => {
+    try {
+        const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
+        const user = await authService.login(req.body.email, hash);
+
         let token = jwt.sign({ id: user.id }, process.env.TOKEN_KEY, { expiresIn: '1h' });
         res.status(200).json({
             message: 'Login successful',
             token: token
         });
-    }).catch(err => {
-        console.log(err);
-        res.status(400).json({ message: "Invalid email / password supplied" });
-    });
-
+    } catch (err) {
+        next(err)
+    };
 }
 
-exports.register = async (req, res) => {
-    const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
-    authService.register(req.body.username, req.body.email, hash).then(user => {
+exports.register = async (req, res, next) => {
+    try {
+        const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
+        const user = await authService.register(req.body.username, req.body.email, hash);
+
         res.status(200).json({
             message: 'User created successfully',
             user: {
@@ -32,11 +34,7 @@ exports.register = async (req, res) => {
                 createdAt: user.createdAt
             }
         });
-    }).catch(err => {
-        if (err.statusCode === 400) {
-            res.status(400).json({ message: err.message });
-        } else {
-            res.status(500).send("Internal server error");
-        }
-    });
-}
+    } catch (err) {
+        next(err); // Passe l'erreur au middleware d'erreur global
+    }
+};
