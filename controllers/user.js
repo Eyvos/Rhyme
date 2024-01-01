@@ -1,6 +1,7 @@
 const userService = require('../services/user');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 //gets parameters from the request body and passes them to the service
 // to get all users
@@ -21,7 +22,7 @@ exports.getOne = async (req, res) => {
         res.status(200).json(user);
     }).catch(err => {
         console.log(err);
-        res.status(401).json({ message: "Invalid email / password supplied" });
+        res.status(401).json({ message: "User '" + req.params.id + "' not found" });
     });
 }
 

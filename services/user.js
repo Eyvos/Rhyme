@@ -68,31 +68,21 @@ exports.changeUsername = async (id, email, username) => {
 
 exports.changePassword = async (id, email, newPassword) => {
     return new Promise((resolve, reject) => {
-        db.User.findOne({
+        db.User.update({password: newPassword}, {
             where: {
-                email: email
+                email: email,
+                id: id
             }
-        }).then(user => {
-            if (user) {
-                reject('Username already used');
-            } else {
-                db.User.update({password: newPassword}, {
-                    where: {
-                        email: email,
-                        id: id
-                    }
-                }).then(columnsAffected => {
-                    if (columnsAffected[0] == 0)
-                        reject('Id ' + id + ' doesn\'t exist in database');
-                    else
-                        resolve();
-                }).catch(err => {
-                    reject(err);
-                });
-            }
+        }).then(columnsAffected => {
+            if (columnsAffected[0] == 0)
+                reject('Id ' + id + ' doesn\'t exist in database');
+            else
+                resolve();
         }).catch(err => {
             reject(err);
         });
+            
+        
     });
 }
 

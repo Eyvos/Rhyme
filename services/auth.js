@@ -1,9 +1,9 @@
 const db = require('../DB/DataAccess');
 const Op = require('sequelize').Op;
 
-exports.login = (email, hash) => {
+exports.login = async (email, hash) => {
     try {
-        const rhyme = db.User.findOne({ where: { email: email } });
+        const user = await db.User.findOne({ where: { email: email } });
         if (!user) {
             const err = new Error('Invalid email or password');
             err.status = 400;
@@ -15,6 +15,7 @@ exports.login = (email, hash) => {
             err.status = 400;
             throw err
         }
+        return user;
     } catch (err) {
         throw err
     }
@@ -56,5 +57,6 @@ exports.register = (username, email, password) => {
         });
     } catch (err) {
         throw err; // Propage l'erreur pour être capturée dans le contrôleur
-    }
-};
+    };
+    });
+}
