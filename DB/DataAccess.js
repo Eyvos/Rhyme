@@ -46,13 +46,22 @@ const User = sequelize.define('user', {
     password: {
         type: sequelizeModule.DataTypes.STRING,
         allowNull: false
+    },
+    isAdmin: {
+        type: sequelizeModule.DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
+}, {
+    defaultScope: {
+        attributes: { exclude: ['password', 'isAdmin'] },
+    },
 });
 User.hasMany(Rhyme, { foreignKey: 'userId', sourceKey: 'id' });
 //#endregion
 //#region sync table with database
-User.sync();
 Rhyme.sync();
+User.sync();
 //#endregion
 exports.User = User;
 exports.Rhyme = Rhyme;

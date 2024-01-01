@@ -3,14 +3,8 @@ const Op = require('sequelize').Op;
 
 exports.login = async (email, hash) => {
     try {
-        const user = await db.User.findOne({ where: { email: email } });
+        const user = await db.User.findOne({where: { email: email, password: hash } });
         if (!user) {
-            const err = new Error('Invalid email or password');
-            err.status = 400;
-            throw err
-        }
-        const isValidPassword = hash == user.password;
-        if (!isValidPassword) {
             const err = new Error('Invalid email or password');
             err.status = 400;
             throw err

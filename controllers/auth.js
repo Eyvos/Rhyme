@@ -7,7 +7,6 @@ exports.login = async (req, res, next) => {
     try {
         const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
         const user = await authService.login(req.body.email, hash);
-        delete user.dataValues.password;
         let token = jwt.sign(user.dataValues, process.env.TOKEN_KEY, { expiresIn: '1h' });
         res.status(200).json({
             message: 'Login successful',
