@@ -3,13 +3,13 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 const authService = require('../services/auth');
 
-
 exports.login = async (req, res, next) => {
     try {
         const hash = bcrypt.hashSync(req.body.password, process.env.SALT);
         const user = await authService.login(req.body.email, hash);
 
-        let token = jwt.sign({ id: user.id }, process.env.TOKEN_KEY, { expiresIn: '1h' });
+        delete user.dataValues.password;
+        let token = jwt.sign(user, process.env.TOKEN_KEY, { expiresIn: '1h' });
         res.status(200).json({
             message: 'Login successful',
             token: token
