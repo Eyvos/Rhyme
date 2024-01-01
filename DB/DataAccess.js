@@ -1,12 +1,14 @@
 const sequelizeModule = require('sequelize');
+const CONFIG = require('../config/config.json').Database;
 
 const sequelize = new sequelizeModule.Sequelize(
-    'rhymedb',
-    'Rhyme',
-    '89qFd4!mWy6Uyk^@MWWC',
+    CONFIG.Name,
+    CONFIG.User,
+    CONFIG.Password,
     {
-        host: '127.0.0.1',
+        host: CONFIG.Host,
         dialect: 'mysql',
+        port: CONFIG.Port,
     }
 );
 
