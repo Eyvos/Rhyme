@@ -15,8 +15,13 @@
 
 ## How To Use
 
-À compléter
+- Install dependencies:<br/>
+<code>npm install</code> 
 
+- Define local database access, using [configuration](config\config.json) file.
+- Launch server: <br/>
+<code>npm run start</code>
+- Create an user (There is no route to create an administrator)
 ## License
 
 MIT
