@@ -27,7 +27,7 @@ export class UserController {
         await UserService.findOne(id).then(user => {
             res.status(200).json(user);
         }).catch((err: Error) => {
-           next(err);
+            next(err);
         });
     }
 
@@ -62,7 +62,7 @@ export class UserController {
         if (!tokenKey) {
             throw new Error('Token key is not set', 500);
         }
-    
+
         const salt = process.env.SALT;
         if (!salt) {
             throw new Error('Salt is not set', 500);
