@@ -44,5 +44,5 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
             docker pull ${{ secrets.DOCKER_USERNAME }}/rhyme:latest
-            docker-compose -f /app/docker-compose.yml up -d
+            docker compose -f /app/docker-compose.yml up -d
           EOF
