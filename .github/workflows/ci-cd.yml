@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rhyme:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rhyme
 
       - name: Add SSH key
         uses: webfactory/ssh-agent@v0.5.3
