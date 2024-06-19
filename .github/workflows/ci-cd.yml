@@ -44,5 +44,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
             docker pull ${{ secrets.DOCKER_USERNAME }}/rhyme:latest
-            docker compose up -d
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/rhyme:latest rhyme-api .
+            docker run -dp 3000:3000 3001:3306 rhyme-api
           EOF
