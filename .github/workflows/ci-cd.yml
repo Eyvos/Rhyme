@@ -32,13 +32,17 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/rhyme:latest
 
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Deploy to server
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
         run: |
-          ssh -i $SSH_PRIVATE_KEY $USER@$HOST << 'EOF'
+          ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
             docker pull ${{ secrets.DOCKER_USERNAME }}/rhyme:latest
             docker-compose -f /app/docker-compose.yml up -d
           EOF
