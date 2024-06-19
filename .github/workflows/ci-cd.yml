@@ -39,6 +39,6 @@ jobs:
           USER: ${{ secrets.USER }}
         run: |
           ssh -i $SSH_PRIVATE_KEY $USER@$HOST << 'EOF'
-            docker pull ${{ secrets.DOCKER_USERNAME }}/my-node-app:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/rhyme:latest
             docker-compose -f /path/to/docker-compose.yml up -d
           EOF
