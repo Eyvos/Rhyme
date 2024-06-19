@@ -1,7 +1,8 @@
 import { RhymeTable, UserTable } from '../DB/DataAccess';
 import { Op } from 'sequelize';
 import { Error } from '../models/error';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 import OpenAI from 'openai';
 import { IRhyme } from '../models/rhyme';
 import { IUser } from '../models/user';

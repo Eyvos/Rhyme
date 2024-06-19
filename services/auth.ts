@@ -45,6 +45,7 @@ export class AuthService{
                         username: username, 
                         email: email, 
                         password: password,
+                        image: '',
                         isAdmin: false
                     });
                 return user;

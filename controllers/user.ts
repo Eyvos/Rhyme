@@ -80,6 +80,27 @@ export class UserController {
         });
     }
 
+    static changeImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const token = req.headers.authorization?.split(' ')[1] ?? '';
+        if (!token) {
+            throw new Error('Token is required', 401);
+        }
+        const userDecoded = jwt.verify(token, process.env.TOKEN_KEY ?? '') as IUser;
+        const image = req.body.image as string;
+        if (!image) {
+            throw new Error('Image is required', 400);
+        }
+        const userId = userDecoded.id;
+        if (!userId) {
+            throw new Error('User ID not found', 422);
+        }
+        await UserService.changeImage(userId, userDecoded.email, image).then(() => {
+            res.status(200).send('Image changed successfully');
+        }).catch((err: Error) => {
+            next(err);
+        });
+    }
+
     static deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const token = req.headers.authorization?.split(' ')[1] ?? '';
         if (!token) {

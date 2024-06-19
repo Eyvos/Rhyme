@@ -11,6 +11,7 @@ _router.get('/', auth, UserController.getAll);
 _router.get('/:id', UserController.getOne);
 _router.put('/', auth, UserController.changeUsername);
 _router.put('/password', auth, UserController.changePassword);
+_router.put('/profilepicture', auth, UserController.changeImage);
 _router.delete('/:id', authAdmin, UserController.deleteUserAdmin);
 _router.delete('/', auth, UserController.deleteUser);
 

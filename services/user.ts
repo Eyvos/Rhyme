@@ -90,6 +90,24 @@ export class UserService {
         });
     }
 
+    static changeImage = async (id: number, email: string, image: string): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            UserTable.update({image: image}, {
+                where: {
+                    email: email,
+                    id: id
+                }
+            }).then(columnsAffected => {
+                if (columnsAffected[0] == 0)
+                    reject('Id ' + id + ' doesn\'t exist in database');
+                else
+                    resolve();
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
     static deleteUserFromDb = async (userId: number): Promise<void> => {
         return new Promise((resolve, reject) => {
             UserTable.destroy({

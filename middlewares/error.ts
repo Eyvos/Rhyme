@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { Error } from "../models/error";
 
-export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+export const ErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     // format errors
     let status = 500
     let message = "Internal server error"

@@ -4,6 +4,7 @@ export interface IUser{
     username: string,
     password: string,
     isAdmin: boolean,
+    image: string,
     createdAt?: Date,
     updatedAt?: Date
 }
