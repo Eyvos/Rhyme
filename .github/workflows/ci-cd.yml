@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rhyme
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rhyme:latest
 
       - name: Add SSH key
         uses: webfactory/ssh-agent@v0.5.3
@@ -46,7 +46,8 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
-            echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+            mkdir -p ~/.docker
+            echo '{"auths": {"https://index.docker.io/v1/": {"auth": "'$(echo -n $DOCKERHUB_USERNAME:$DOCKERHUB_TOKEN | base64)'"}}}' > ~/.docker/config.json
             docker build -t ${{ secrets.DOCKER_USERNAME }}/rhyme:latest .
             docker run -dp 3000:3000 -p 3306:3306 rhyme
           EOF
