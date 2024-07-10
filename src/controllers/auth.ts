@@ -1,5 +1,5 @@
 import { AuthService } from '../services/auth';
-import  { Error } from '../models/error';
+import { Error } from '../models/error';
 import { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -20,7 +20,7 @@ export class AuthController {
             }
             const hash = bcrypt.hashSync(req.body.password, salt);
             const user = await AuthService.login(req.body.email, hash);
-            let token = jwt.sign(user, tokenKey, { expiresIn: '1h' });
+            let token = jwt.sign({ user }, tokenKey, { expiresIn: '1h' });
             res.status(200).json({
                 message: 'Login successful',
                 token: token
@@ -30,7 +30,7 @@ export class AuthController {
         };
     }
 
-    public static async register(req: Request, res: Response, next: NextFunction): Promise<void>{
+    public static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const salt = process.env.SALT;
             if (!salt) {
