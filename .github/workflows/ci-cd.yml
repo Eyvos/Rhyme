@@ -48,5 +48,5 @@ jobs:
           ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
             echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
             docker build -t ${{ secrets.DOCKER_USERNAME }}/rhyme:latest .
-            docker run -dp 3000:3000 -p 3306:3306 rhyme-api
+            docker run -dp 3000:3000 -p 3306:3306 rhyme
           EOF
