@@ -14,31 +14,45 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       -
         name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/rhyme:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rhyme:latest
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           ssh -i $SSH_PRIVATE_KEY $USER@$HOST << 'EOF'
-            docker pull ${{ secrets.DOCKER_USERNAME }}/my-node-app:latest
+            mkdir -p ~/.docker
+            echo '{"auths": {"https://index.docker.io/v1/": {"auth": "'$(echo -n $DOCKERHUB_USERNAME:$DOCKERHUB_TOKEN | base64)'"}}}' > ~/.docker/config.json
+            if ! command -v docker-compose &> /dev/null
+            then
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+            fi
+            docker pull $DOCKERHUB_USERNAME/rhyme:latest
             docker-compose -f /path/to/docker-compose.yml up -d
           EOF
