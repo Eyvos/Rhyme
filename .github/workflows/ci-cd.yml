@@ -42,8 +42,17 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
-            docker build -t ${{ secrets.DOCKER_USERNAME }}/rhyme:latest .
-            docker-compose -f ../../docker-compose.yml up -d
+          ssh -i $SSH_PRIVATE_KEY $USER@$HOST << 'EOF'
+            mkdir -p ~/.docker
+            echo '{"auths": {"https://index.docker.io/v1/": {"auth": "'$(echo -n $DOCKERHUB_USERNAME:$DOCKERHUB_TOKEN | base64)'"}}}' > ~/.docker/config.json
+            if ! command -v docker-compose &> /dev/null
+            then
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+            fi
+            docker pull $DOCKERHUB_USERNAME/rhyme:latest
+            docker-compose -f /path/to/docker-compose.yml up -d
           EOF
