@@ -39,10 +39,14 @@ jobs:
 
       - name: Deploy to server
         env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+            echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
             docker build -t ${{ secrets.DOCKER_USERNAME }}/rhyme:latest .
             docker run -dp 3000:3000 -p 3306:3306 rhyme-api
           EOF
