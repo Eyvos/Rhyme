@@ -1,9 +1,12 @@
 //Importing express and creating an instance of it
 import express, { NextFunction, Request, Response } from 'express';
+import cors from "cors";
 import { ErrorHandler } from './middlewares/error';
 // import { OpenApiValidator } from 'express-openapi-validator/dist/openapi.validator';
 
 const app = express();
+
+app.use(cors());
 
 //Importing the body-parser library
 app.use(express.json());
