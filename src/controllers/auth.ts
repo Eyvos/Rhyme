@@ -23,7 +23,8 @@ export class AuthController {
             let token = jwt.sign({ user }, tokenKey, { expiresIn: '1h' });
             res.status(200).json({
                 message: 'Login successful',
-                token: token
+                token: token,
+                user
             });
         } catch (err) {
             next(err)
