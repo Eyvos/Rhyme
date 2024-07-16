@@ -9,6 +9,7 @@ const _router = Router();
 
 _router.get('/', auth, UserController.getAll);
 _router.get('/:id', UserController.getOne);
+_router.get('/fromtoken', auth, UserController.getFromToken);
 _router.put('/', auth, UserController.changeUsername);
 _router.put('/password', auth, UserController.changePassword);
 _router.put('/profilepicture', auth, UserController.changeImage);

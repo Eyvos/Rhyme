@@ -31,6 +31,15 @@ export class UserController {
         });
     }
 
+    static getFromToken = (req: Request, res: Response, next: NextFunction): void => {
+        const token = req.headers.authorization?.split(' ')[1] ?? '';
+        if (!token) {
+            throw new Error('Token is required', 401);
+        }
+        const userDecoded = jwt.verify(token, process.env.TOKEN_KEY ?? '') as IUser;
+        res.status(200).json(userDecoded);
+    }
+
     static changeUsername = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const token = req.headers.authorization?.split(' ')[1] ?? '';
         if (!token) {
