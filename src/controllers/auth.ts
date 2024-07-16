@@ -32,6 +32,11 @@ export class AuthController {
 
     public static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const tokenKey = process.env.TOKEN_KEY;
+            if (!tokenKey) {
+                throw new Error('Token key not found', 500);
+            }
+
             const salt = process.env.SALT;
             if (!salt) {
                 throw new Error('Salt not found', 500);
@@ -51,9 +56,11 @@ export class AuthController {
             }
             const hash = bcrypt.hashSync(password, salt);
             const user = await AuthService.register(req.body.username, req.body.email, hash);
+            let token = jwt.sign({ user }, tokenKey, { expiresIn: '1h' });
 
             res.status(200).json({
                 message: 'User created successfully',
+                token: token,
                 user: {
                     id: user.id,
                     username: user.username,
