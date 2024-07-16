@@ -86,6 +86,10 @@ const User = sequelize.define<UserModel>('User', {
 // Définir la relation User -> Rhyme
 User.hasMany(Rhyme, { foreignKey: 'userId', sourceKey: 'id' });
 
+const UserFollows = sequelize.define('UserFollows', {})
+UserFollows.hasMany(User, { foreignKey: 'userId', sourceKey: 'id' });
+UserFollows.hasMany(User, { foreignKey: 'followerId', sourceKey: 'id' });
+
 // Synchroniser les modèles avec la base de données
 sequelize.sync({ alter: true }) // Utiliser alter pour mettre à jour les tables existantes sans les recréer
     .then(() => console.log('Database & tables created!'))
@@ -94,3 +98,4 @@ sequelize.sync({ alter: true }) // Utiliser alter pour mettre à jour les tables
 export const db = sequelize;
 export const UserTable = User;
 export const RhymeTable = Rhyme;
+export const UserFollowsTable = UserFollows;
